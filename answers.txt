@@ -9,3 +9,6 @@ Pass a request path longer than 1024 and overwrite handler in process_client
 exercise 3
 This exploits bug3, which overwrite value of handler. Other bugs can accomplish
 this by overwrite return address in the stack.
+
+exercise 4
+Except bug4, all bugs works for this exercise. The reason is that the variable that was overwritten in bug4 is not on its stack.
