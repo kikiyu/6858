@@ -2,16 +2,31 @@
 # [file:#lines]
 # desc
 #
+[http.c:159]
+url_decode will copy value from sp to value, while sp is a pointer in buf,
+which is of size 8192, and value is sizeof 512. So value may be 
+overflowed.
 
-[zookd.c:1612]
-description goes here. for example, the 'buf' variable can be
-overwritten by the 'msg' variable because ...
+    url_decode(value, sp);
 
-    <paste offending line(s) of code here>
+[http.c:165]
+sprintf copies buf into envvar, while buf is larger than envvar in size.
+This may cause an overflow.
 
-[http.c:1512]
-another description.
+    sprintf(envvar, "HTTP_%s", buf);
 
-    <paste offending line(s) of code here>
+[http.c:282]
+The strcat may corrupt the stack, because size of 'name' may be larger 
+than that of 'pn'.
 
-# many more come here
+    strcat(pn, name);
+
+[http.c:94]
+sprintf can corrupt envp and thus corrupt env.
+
+    envp += sprintf(envp, "REQUEST_METHOD=%s", buf) + 1;
+
+[zookd.c:105]
+url_decode called in http_request_line may corrupt reqpath.
+
+    url_decode(reqpath, sp1);
