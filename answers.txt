@@ -1,1 +1,7 @@
 ## Place your answers here.
+exploit-2a.py bug1 http.c:159
+Pass a header longer than 512 bytes. This overflows value in http_request_headers, and also return address of http_request_headers.
+
+exploit-2b.py bug3 http.c:282
+Pass a request path longer than 1024 and overwrite handler in process_client
+
