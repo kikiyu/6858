@@ -2,8 +2,9 @@
 
 import rpclib
 import sys
-import auth
 import pbkdf2
+import auth
+import bank
 from debug import *
 from zoodb import *
 
@@ -34,12 +35,12 @@ class AuthRpcServer(rpclib.RpcServer):
 
         db_person = person_setup()
         person = db_person.query(Person).get(username)
-        if person:
-            return None
         newperson = Person()
         newperson.username = username
         db_person.add(newperson)
         db_person.commit()
+
+        bank.register(username)
         return auth.newtoken(db, newcred)
     
     def rpc_check_token(self, username, token):
