@@ -70,11 +70,23 @@ rm -rf /jail/zoobar/db
 python /jail/zoobar/zoodb.py init-person
 python /jail/zoobar/zoodb.py init-transfer
 
+# 61020 -> gid for zoofs-based service
+# 61021 -> uid for dynamic
+# 61022 -> uid for static
+# 61025 -> gid for scripts
 set_perms 61011:61011 100 /jail/zookd
-set_perms 61012:61012 100 /jail/zookfs
-set_perms 61013:61013 555 /jail/zoobar/index.cgi
-#set_perms 61012;61012 700 /jail/zoobar/db
-chown -R 61012:61012 /jail/zoobar/db
+set_perms 61020:61020 010 /jail/zookfs
+
+# executables must in the group 61025
+set_perms 61021:61025 500 /jail/zoobar/index.cgi
+
+# dynamic fs service
+chown -R 61021:61021 /jail/zoobar/db
 chmod -R 700 /jail/zoobar/db
+set_perms 61021:61021 400 /jail/zoobar/*.py
+set_perms 61021:61021 400 /jail/zoobar/*.pyc
 
-
+# static fs service
+set_perms 61022:61022 400 /jail/index.html
+set_perms 61022:61022 400 /jail/zoobar/media/*
+set_perms 61022:61022 400 /jail/zoobar/templates/*
