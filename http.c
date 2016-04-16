@@ -65,7 +65,7 @@ const char *http_request_line(int fd, char *reqpath, char *env, size_t *env_len)
 {
     static char buf[8192];      /* static variables are not on the stack */
     char *sp1, *sp2, *qp, *envp = env;
-    int n = sizeof(buf);
+    int len = sizeof(buf);
 
     /* For lab 2: don't remove this line. */
     touch("http_request_line");
@@ -103,7 +103,7 @@ const char *http_request_line(int fd, char *reqpath, char *env, size_t *env_len)
     }
 
     /* decode URL escape sequences in the requested path into reqpath */
-    url_decode(reqpath, sp1);
+    url_decode(reqpath, sp1, 2048);
     url_decode(reqpath, sp1, 2048);
 
     envp += snprintf(envp, len, "REQUEST_URI=%s", reqpath) + 1;
