@@ -3,6 +3,7 @@
 import rpclib
 import sys
 import auth
+import pbkdf2
 from debug import *
 from zoodb import *
 
@@ -13,6 +14,7 @@ class AuthRpcServer(rpclib.RpcServer):
         cred = db.query(Cred).get(username)
         if not cred:
             return None
+        password = unicode(pbkdf2.PBKDF2(password, cred.salt).hexread(32))
         if cred.password == password:
             return auth.newtoken(db, cred)
         else:
@@ -25,7 +27,8 @@ class AuthRpcServer(rpclib.RpcServer):
             return None
         newcred = Cred()
         newcred.username = username
-        newcred.password = password
+        newcred.salt = os.urandom(8).encode('base-64')
+        newcred.password = unicode(pbkdf2.PBKDF2(password, newcred.salt).hexread(32))
         db.add(newcred)
         db.commit()
 
