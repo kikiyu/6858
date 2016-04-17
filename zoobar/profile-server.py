@@ -9,6 +9,8 @@ import hashlib
 import socket
 import bank
 import zoodb
+import hashlib
+import auth_client
 
 from debug import *
 
@@ -20,6 +22,7 @@ class ProfileAPIServer(rpclib.RpcServer):
     def __init__(self, user, visitor):
         self.user = user
         self.visitor = visitor
+        self.token = auth_client.get_token(user)
 
     def rpc_get_self(self):
         return self.user
@@ -30,6 +33,7 @@ class ProfileAPIServer(rpclib.RpcServer):
     def rpc_get_xfers(self, username):
         xfers = []
         for xfer in bank.get_log(username):
+            print 'get_xfers', xfer
             xfers.append({ 'sender': xfer.sender,
                            'recipient': xfer.recipient,
                            'amount': xfer.amount,
@@ -48,7 +52,7 @@ class ProfileAPIServer(rpclib.RpcServer):
                }
 
     def rpc_xfer(self, target, zoobars):
-        bank.transfer(self.user, target, zoobars)
+        bank.transfer(self.user, target, zoobars, self.token)
 
 def run_profile(pcode, profile_api_client):
     globals = {'api': profile_api_client}
@@ -56,9 +60,13 @@ def run_profile(pcode, profile_api_client):
 
 class ProfileServer(rpclib.RpcServer):
     def rpc_run(self, pcode, user, visitor):
-        uid = 0
+        uid = 61050
 
-        userdir = '/tmp'
+        userdir = '/tmp' + hashlib.sha1(user).hexdigest()
+        if not os.path.exists(userdir):
+            os.mkdir(userdir)
+            os.chown(userdir, uid, uid)
+            os.chmod(userdir, 0700)
 
         (sa, sb) = socket.socketpair(socket.AF_UNIX, socket.SOCK_STREAM, 0)
         pid = os.fork()

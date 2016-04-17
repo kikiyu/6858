@@ -51,6 +51,13 @@ class AuthRpcServer(rpclib.RpcServer):
         else:
             return False
 
+    def rpc_get_token(self, username):
+        db = cred_setup()
+        cred = db.query(Cred).get(username)
+        if not cred:
+            return None
+        return cred.token
+
 (_, dummy_zookld_fd, sockpath) = sys.argv
 
 s = AuthRpcServer()
