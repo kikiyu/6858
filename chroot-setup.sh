@@ -98,7 +98,7 @@ set_perms 61021:61025 500 /jail/zoobar/index.cgi
 set_perms 61020:61020 070 /jail/zoobar/db
 set_perms_r 61030:61030 700 /jail/zoobar/db/cred
 set_perms_r 61021:61030 770 /jail/zoobar/db/person
-set_perms_r 61021:61021 700 /jail/zoobar/db/transfer
+set_perms_r 61021:61060 770 /jail/zoobar/db/transfer
 set_perms_r 61040:61040 700 /jail/zoobar/db/bank
 set_perms 61021:61021 400 /jail/zoobar/*.py
 set_perms 61021:61021 400 /jail/zoobar/*.pyc

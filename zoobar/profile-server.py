@@ -24,6 +24,12 @@ class ProfileAPIServer(rpclib.RpcServer):
         self.visitor = visitor
         self.token = auth_client.get_token(user)
 
+        uid = 61060
+        gid = 61020
+        os.setresgid(gid, gid, gid)
+        os.setgroups([61030, 61060])
+        os.setresuid(uid, uid, uid)
+
     def rpc_get_self(self):
         return self.user
 
