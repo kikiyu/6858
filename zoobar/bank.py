@@ -3,6 +3,7 @@ from debug import *
 
 import time
 import rpclib
+import auth_client
 
 def get_balance(username):
     with rpclib.client_connect('/banksvc/sock') as c:
@@ -19,7 +20,10 @@ def register(username):
         ret = c.call('register', username=username)
         return ret
 
-def transfer(sender, recipient, zoobars):
+def transfer(sender, recipient, zoobars, token):
+    if not auth_client.check_token(sender, token):
+        raise AttributeError('bad token for transfer')
+
     persondb = person_setup()
     senderp = persondb.query(Person).get(sender)
     recipientp = persondb.query(Person).get(recipient)
